@@ -1,0 +1,5 @@
+time="2022-07-18 10:28:34" level=info msg="| 200 |     278.988µs |      172.18.0.1 | GET | /swagger/index.html |"
+time="2022-07-18 10:28:34" level=info msg="| 200 |     285.157µs |      172.18.0.1 | GET | /swagger/swagger-ui.css |"
+time="2022-07-18 10:28:34" level=info msg="| 200 |     908.753µs |      172.18.0.1 | GET | /swagger/swagger-ui-bundle.js |"
+time="2022-07-18 10:28:34" level=info msg="| 200 |     355.397µs |      172.18.0.1 | GET | /swagger/swagger-ui-standalone-preset.js |"
+time="2022-07-18 10:28:34" level=info msg="| 200 |     297.568µs |      172.18.0.1 | GET | /swagger/doc.json |"

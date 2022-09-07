@@ -1,0 +1,2 @@
+time="2022-07-08 04:28:05" level=info msg="| 400 |    5.057804ms |      172.24.0.1 | POST | /api/admin_auth |"
+time="2022-07-08 04:28:05" level=info msg="| 400 |    5.295206ms |      172.24.0.1 | POST | /api/admin_auth |"

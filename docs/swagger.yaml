@@ -1,0 +1,1845 @@
+definitions:
+  controllers.AddOrderReq:
+    properties:
+      order_details:
+        items:
+          $ref: '#/definitions/controllers.OrderDetail'
+        type: array
+    type: object
+  controllers.OrderDetail:
+    properties:
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+    type: object
+  models.Bank:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      invar_coin:
+        type: number
+      tokens:
+        items:
+          $ref: '#/definitions/models.Token'
+        type: array
+      updated_at:
+        type: string
+      usdt_coin:
+        type: number
+      user_id:
+        type: integer
+    type: object
+  models.Order:
+    properties:
+      comment:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      order_items:
+        items:
+          $ref: '#/definitions/models.OrderItem'
+        type: array
+      payment_limit_time:
+        type: string
+      serial:
+        type: string
+      status:
+        type: integer
+      total_amount:
+        type: number
+      transaction_chain:
+        type: string
+      transaction_id:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.OrderItem:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      order_id:
+        type: integer
+      price:
+        type: number
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.Product:
+    properties:
+      buy_permissions:
+        items:
+          type: number
+        type: array
+      contract_address:
+        type: string
+      contract_chain:
+        type: string
+      contract_type:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      preview_image:
+        type: string
+      price:
+        type: number
+      status:
+        type: boolean
+      stock:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.Token:
+    properties:
+      bank_id:
+        type: integer
+      contract_address:
+        type: string
+      contract_chain:
+        type: string
+      contract_type:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      own_id:
+        type: integer
+      quantity:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  models.UserKYC:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      id_photo_back:
+        type: string
+      id_photo_front:
+        type: string
+      identity_card:
+        type: string
+      name:
+        type: string
+      photo:
+        type: string
+      photo_with_id:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.WhiteList:
+    properties:
+      address:
+        type: string
+      chain_id:
+        type: integer
+      coin_type:
+        type: string
+      comment:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      nick_name:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  status.Response:
+    properties:
+      status_code:
+        type: integer
+      status_message:
+        type: string
+    type: object
+  status.ResponseWtihData:
+    properties:
+      data:
+        type: any
+      status:
+        $ref: '#/definitions/status.Response'
+    type: object
+info:
+  contact:
+    email: service@invar.finance
+    name: InVar
+    url: https://www.invar.finance/
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /admin/bank/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 獲得使用者的財產狀況
+      parameters:
+      - description: Bank ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Bank'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 獲得使用者的財產狀況
+      tags:
+      - Bank
+  /admin/cancel_order/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: 取消訂單
+      parameters:
+      - description: 訂單ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 取消訂單
+      tags:
+      - Order
+  /admin/change_password:
+    post:
+      consumes:
+      - application/json
+      description: 管理者修改密碼
+      parameters:
+      - description: 舊密碼
+        in: body
+        name: old_password
+        required: true
+        schema:
+          type: string
+      - description: 新密碼
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: 確認新密碼
+        in: body
+        name: check_password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 管理者修改密碼
+      tags:
+      - Auth
+  /admin/change_password_by_admin:
+    post:
+      consumes:
+      - application/json
+      description: 修改使用者密碼
+      parameters:
+      - description: 用戶ID
+        in: body
+        name: user_id
+        required: true
+        schema:
+          type: string
+      - description: 新密碼
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: 確認新密碼
+        in: body
+        name: check_password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 修改使用者密碼
+      tags:
+      - Auth
+  /admin/completed_order/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: 完成訂單
+      parameters:
+      - description: 訂單ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 完成訂單
+      tags:
+      - Order
+  /admin/kyc/:id:
+    patch:
+      consumes:
+      - multipart/form-data
+      description: 管理者更新實名資料
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 姓名
+        in: formData
+        name: name
+        type: string
+      - description: 身分證號碼
+        in: formData
+        name: identity_card
+        type: string
+      - description: 審核結果
+        in: formData
+        name: status
+        type: string
+      - description: 大頭貼
+        in: formData
+        name: photo_file
+        type: file
+      - description: 身分證正面
+        in: formData
+        name: id_photo_front_file
+        type: file
+      - description: 身分證背面
+        in: formData
+        name: id_photo_back_file
+        type: file
+      - description: 與身分證合照
+        in: formData
+        name: photo_with_id_file
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 管理者更新實名資料
+      tags:
+      - User
+    post:
+      consumes:
+      - application/json
+      description: 管理者獲得使用者實名資料
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UserKYC'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 管理者獲得使用者實名資料
+      tags:
+      - User
+  /admin/order:
+    get:
+      consumes:
+      - application/json
+      description: 獲得所有使用者的訂單
+      parameters:
+      - description: 序號
+        in: body
+        name: serial
+        schema:
+          type: string
+      - description: 姓名
+        in: body
+        name: user_name
+        schema:
+          type: string
+      - description: 信箱
+        in: body
+        name: user_email
+        schema:
+          type: string
+      - description: 建立日期
+        in: body
+        name: create_at
+        schema:
+          type: string
+      - description: 分頁號碼
+        in: body
+        name: page_number
+        schema:
+          type: integer
+      - description: 每頁數量
+        in: body
+        name: per_page
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Order'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 獲得所有使用者的訂單
+      tags:
+      - Order
+  /admin/product:
+    get:
+      consumes:
+      - application/json
+      description: 獲得全部商品清單
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Product'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 獲得全部商品清單
+      tags:
+      - Product
+    patch:
+      consumes:
+      - multipart/form-data
+      description: 建立新商品
+      parameters:
+      - default: 1
+        description: 庫存數量
+        in: formData
+        name: stock
+        type: integer
+      - description: 商品狀態
+        in: formData
+        name: status
+        type: boolean
+      - description: 商品價格
+        in: formData
+        name: price
+        type: integer
+      - description: 商品標題
+        in: formData
+        name: title
+        type: string
+      - description: 商品描述
+        in: formData
+        name: description
+        type: string
+      - description: 區塊鏈名稱
+        in: formData
+        name: contract_chain
+        type: string
+      - description: 合約類型
+        in: formData
+        name: contract_type
+        type: string
+      - description: 合約地址
+        in: formData
+        name: contract_address
+        type: string
+      - description: 購買權限
+        in: formData
+        items:
+          type: integer
+        name: buy_remissions
+        type: array
+      - description: 預覽檔案
+        in: formData
+        name: small_image
+        type: file
+      - description: 完整檔案
+        in: formData
+        name: large_image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "417":
+          description: Expectation Failed
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 建立新商品
+      tags:
+      - Product
+    post:
+      consumes:
+      - multipart/form-data
+      description: 建立新商品
+      parameters:
+      - default: 1
+        description: 庫存數量
+        in: formData
+        name: stock
+        required: true
+        type: integer
+      - description: 商品狀態
+        in: formData
+        name: status
+        required: true
+        type: boolean
+      - description: 商品價格
+        in: formData
+        name: price
+        required: true
+        type: integer
+      - description: 商品標題
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: 商品描述
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: 區塊鏈名稱
+        in: formData
+        name: contract_chain
+        required: true
+        type: string
+      - description: 合約類型
+        in: formData
+        name: contract_type
+        required: true
+        type: string
+      - description: 合約地址
+        in: formData
+        name: contract_address
+        required: true
+        type: string
+      - description: 購買權限
+        in: formData
+        items:
+          type: integer
+        name: buy_remissions
+        required: true
+        type: array
+      - description: 預覽檔案
+        in: formData
+        name: small_image
+        required: true
+        type: file
+      - description: 完整檔案
+        in: formData
+        name: large_image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "417":
+          description: Expectation Failed
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 建立新商品
+      tags:
+      - Product
+  /admin/product/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 獲得全部商品清單
+      parameters:
+      - description: 商品ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 獲得全部商品清單
+      tags:
+      - Product
+  /admin/whitelist/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 刪除使用者的白名單
+      parameters:
+      - description: 白名單ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 刪除使用者的白名單
+      tags:
+      - WhiteList
+    get:
+      consumes:
+      - application/json
+      description: 獲得使用者的白名單
+      parameters:
+      - description: 使用者ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.WhiteList'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 獲得使用者的白名單
+      tags:
+      - WhiteList
+  /admin_auth:
+    post:
+      consumes:
+      - application/json
+      description: 後台管理者登入
+      parameters:
+      - description: 帳號
+        in: body
+        name: account
+        required: true
+        schema:
+          type: string
+      - description: 密碼
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: 二階段驗證碼
+        in: body
+        name: tfa
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      summary: 後台管理者登入
+      tags:
+      - Auth
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: 輸入帳號密碼與二階段驗證進行登入
+      parameters:
+      - description: 帳號
+        in: body
+        name: account
+        required: true
+        schema:
+          type: string
+      - description: 密碼
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: 二階段驗證碼
+        in: body
+        name: tfa
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      summary: 使用者帳號登入
+      tags:
+      - Auth
+  /bank:
+    get:
+      consumes:
+      - application/json
+      description: 獲得全部使用者的財產狀況
+      parameters:
+      - description: 信箱
+        in: body
+        name: email
+        schema:
+          type: string
+      - description: 姓名
+        in: body
+        name: username
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Bank'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 獲得全部使用者的財產狀況
+      tags:
+      - Bank
+  /bank/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 獲得使用者的財產狀況
+      parameters:
+      - description: Bank ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Bank'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 獲得使用者的財產狀況
+      tags:
+      - Bank
+  /cancel_order/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: 取消訂單
+      parameters:
+      - description: 訂單ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 取消訂單
+      tags:
+      - Order
+  /change_password:
+    post:
+      consumes:
+      - application/json
+      description: 修改密碼
+      parameters:
+      - description: 舊密碼
+        in: body
+        name: old_password
+        required: true
+        schema:
+          type: string
+      - description: 新密碼
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: 確認新密碼
+        in: body
+        name: check_password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 修改密碼
+      tags:
+      - Auth
+  /forget_password:
+    post:
+      consumes:
+      - application/json
+      description: 發送忘記密碼信
+      parameters:
+      - description: 信箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      summary: 發送忘記密碼信
+      tags:
+      - Auth
+  /forget_password_access:
+    post:
+      consumes:
+      - application/json
+      description: 獲得忘記密碼令牌
+      parameters:
+      - description: 信箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: 請求碼
+        in: body
+        name: request_token
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      summary: 獲得忘記密碼令牌
+      tags:
+      - Auth
+  /get_email_code:
+    post:
+      consumes:
+      - application/json
+      description: 獲得信箱驗證碼
+      parameters:
+      - description: 信箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      summary: 獲得信箱驗證碼
+      tags:
+      - Auth
+  /kyc:
+    get:
+      consumes:
+      - application/json
+      description: 獲得實名資料
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UserKYC'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 獲得實名資料
+      tags:
+      - User
+    patch:
+      consumes:
+      - multipart/form-data
+      description: 更新實名資料
+      parameters:
+      - description: 姓名
+        in: formData
+        name: name
+        type: string
+      - description: 身分證號碼
+        in: formData
+        name: identity_card
+        type: string
+      - description: 大頭貼
+        in: formData
+        name: photo_file
+        type: file
+      - description: 身分證正面
+        in: formData
+        name: id_photo_front_file
+        type: file
+      - description: 身分證背面
+        in: formData
+        name: id_photo_back_file
+        type: file
+      - description: 與身分證合照
+        in: formData
+        name: photo_with_id_file
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 更新實名資料
+      tags:
+      - User
+    post:
+      consumes:
+      - multipart/form-data
+      description: 新增實名資料
+      parameters:
+      - description: 姓名
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: 身分證號碼
+        in: formData
+        name: identity_card
+        required: true
+        type: string
+      - description: 大頭貼
+        in: formData
+        name: photo_file
+        required: true
+        type: file
+      - description: 身分證正面
+        in: formData
+        name: id_photo_front_file
+        required: true
+        type: file
+      - description: 身分證背面
+        in: formData
+        name: id_photo_back_file
+        required: true
+        type: file
+      - description: 與身分證合照
+        in: formData
+        name: photo_with_id_file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 新增實名資料
+      tags:
+      - User
+  /order:
+    get:
+      consumes:
+      - application/json
+      description: 使用者獲得自己的全部訂單
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Order'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 使用者獲得自己的全部訂單
+      tags:
+      - Order
+    post:
+      consumes:
+      - application/json
+      description: 新增訂單
+      parameters:
+      - description: 商品ID與數量
+        in: body
+        name: order_details
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.AddOrderReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 新增訂單
+      tags:
+      - Order
+  /payment_order/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: 付款通知
+      parameters:
+      - description: 訂單ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 區塊鏈名稱
+        in: body
+        name: transaction_chain
+        required: true
+        schema:
+          type: string
+      - description: 交易序號
+        in: body
+        name: transaction_id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 付款通知
+      tags:
+      - Order
+  /product:
+    get:
+      consumes:
+      - application/json
+      description: 獲得全部商品清單
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Product'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 獲得全部商品清單
+      tags:
+      - Product
+  /product/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 獲得全部商品清單
+      parameters:
+      - description: 商品ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 獲得全部商品清單
+      tags:
+      - Product
+  /refresh_token:
+    post:
+      consumes:
+      - application/json
+      description: 更換令牌
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      summary: 更換令牌
+      tags:
+      - Auth
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: 註冊新帳號
+      parameters:
+      - description: 名稱
+        in: body
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: 信箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: 信箱驗證碼
+        in: body
+        name: email_code
+        required: true
+        schema:
+          type: string
+      - description: 密碼
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: 密碼確認
+        in: body
+        name: password_check
+        required: true
+        schema:
+          type: string
+      - description: 邀請碼
+        in: body
+        name: referrer_code
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      summary: 註冊新帳號
+      tags:
+      - Auth
+  /reset_password_with_token:
+    post:
+      consumes:
+      - application/json
+      description: 發送重設密碼
+      parameters:
+      - description: 信箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      summary: 發送重設密碼
+      tags:
+      - Auth
+  /revoke_token:
+    post:
+      consumes:
+      - application/json
+      description: 撤銷令牌
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      summary: 撤銷令牌
+      tags:
+      - Auth
+  /whitelist:
+    get:
+      consumes:
+      - application/json
+      description: 獲得使用者的白名單
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.WhiteList'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 獲得使用者的白名單
+      tags:
+      - WhiteList
+    post:
+      consumes:
+      - application/json
+      description: 新增使用者的白名單
+      parameters:
+      - description: 區塊鏈名稱
+        in: body
+        name: chain_name
+        required: true
+        schema:
+          type: string
+      - description: 區塊鏈ID
+        in: body
+        name: chain_id
+        required: true
+        schema:
+          type: string
+      - description: 地址
+        in: body
+        name: address
+        required: true
+        schema:
+          type: string
+      - description: 暱稱
+        in: body
+        name: nick_name
+        schema:
+          type: string
+      - description: 備註
+        in: body
+        name: comment
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.WhiteList'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 新增使用者的白名單
+      tags:
+      - WhiteList
+  /whitelist/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 刪除使用者的白名單
+      parameters:
+      - description: 白名單ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/status.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 刪除使用者的白名單
+      tags:
+      - WhiteList
+    patch:
+      consumes:
+      - application/json
+      description: 更新使用者的白名單
+      parameters:
+      - description: 白名單ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 暱稱
+        in: body
+        name: nick_name
+        schema:
+          type: string
+      - description: 備註
+        in: body
+        name: comment
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/status.ResponseWtihData'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.WhiteList'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/status.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/status.Response'
+      security:
+      - BearerAuth: []
+      summary: 更新使用者的白名單
+      tags:
+      - WhiteList
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -1,0 +1,13 @@
+time="2022-06-27 13:28:09" level=info msg="| 200 |    2.394279ms |      172.23.0.1 | POST | /api/users/email_code |"
+time="2022-06-27 13:28:09" level=info msg="| 200 |    2.729813ms |      172.23.0.1 | POST | /api/users/email_code |"
+time="2022-06-27 13:28:14" level=info msg="Send email fail, To: sksly789@gmail.com" name=Smtp
+time="2022-06-27 13:30:26" level=info msg="| 200 |    1.496279ms |      172.24.0.1 | POST | /api/users/email_code |"
+time="2022-06-27 13:30:26" level=info msg="| 200 |    1.850277ms |      172.24.0.1 | POST | /api/users/email_code |"
+time="2022-06-27 13:30:31" level=info msg="Send email fail, To: sksly789@gmail.com" name=Smtp
+time="2022-06-27 14:02:07" level=info msg="| 200 |    1.823628ms |      172.25.0.1 | POST | /api/users/email_code |"
+time="2022-06-27 14:02:07" level=info msg="| 200 |    2.140396ms |      172.25.0.1 | POST | /api/users/email_code |"
+time="2022-06-27 14:02:32" level=info msg="| 404 |       10.69µs |      172.25.0.1 | GET | /api/users/register |"
+time="2022-06-27 14:03:02" level=info msg="| 200 |  195.551388ms |      172.25.0.1 | POST | /api/users/register |"
+time="2022-06-27 14:03:02" level=info msg="| 200 |  195.694517ms |      172.25.0.1 | POST | /api/users/register |"
+time="2022-06-27 14:25:41" level=info msg="| 200 |  197.334055ms |      172.25.0.1 | POST | /api/users/auth |"
+time="2022-06-27 14:25:41" level=info msg="| 200 |  197.558042ms |      172.25.0.1 | POST | /api/users/auth |"

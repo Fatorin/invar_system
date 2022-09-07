@@ -1,0 +1,48 @@
+version: '3.9'
+services:
+  backend:
+    image: invar_system:latest
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config.env:/app/config.env
+      - ./static:/app/static/
+      - .logs:/app/logs/
+    depends_on:
+      - postgresql
+      - redis
+  postgresql:
+    container_name: postgresql
+    image: postgres:14.3
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-q",
+          "-d",
+          "invar",
+          "-U",
+          "invar"
+        ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: invar
+      POSTGRES_PASSWORD: @db_password
+      POSTGRES_DB: invar
+      PGDATA: /var/lib/postgresql/data
+      TZ: "Asia/Taipei"
+    volumes:
+      - .dbdata:/var/lib/postgresql/data
+    restart: always
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass @redis_password
